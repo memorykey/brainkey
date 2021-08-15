@@ -1,0 +1,3 @@
+#!/bin/sh
+
+brainkey --salt=truecrypt --size=32 --difficulty=20 $*

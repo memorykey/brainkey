@@ -1,0 +1,3 @@
+#!/bin/sh
+
+brainkey --salt=exodus --size=12 --difficulty=20 --wordlist $HOME/lib/bip39-english.txt $*

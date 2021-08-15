@@ -1,0 +1,3 @@
+#!/bin/sh
+
+brainkey --salt=electrum --size=16 --difficulty=20 $*
