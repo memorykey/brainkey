@@ -19,7 +19,7 @@ use std::collections::HashMap;
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use rand::distributions::Uniform;
-use bip39::{Mnemonic, MnemonicType, Language};
+use bip39::{Mnemonic, Language};
 
 const BUFFER_SIZE : usize = 4096;
 
