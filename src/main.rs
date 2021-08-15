@@ -3,6 +3,7 @@ extern crate crypto;
 extern crate termion;
 extern crate rand;
 extern crate rand_chacha;
+extern crate bip39;
 
 use argparse::{ArgumentParser, Store, StoreTrue};
 use std::fmt::Write as FmtWrite;
@@ -18,6 +19,7 @@ use std::collections::HashMap;
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use rand::distributions::Uniform;
+use bip39::{Mnemonic, MnemonicType, Language};
 
 const BUFFER_SIZE : usize = 4096;
 
@@ -32,6 +34,7 @@ fn main() {
     let mut out_key_string = "".to_string();
     let mut in_is_out = false;
     let mut shuffle = false;
+    let mut bip39_output = false;
     {
         let mut ap = ArgumentParser::new();
         ap.set_description("brainkey key generator");
@@ -55,6 +58,8 @@ fn main() {
             .add_option(&["--outkey"], Store, "Use specified output key for further operations");
         ap.refer(&mut shuffle)
             .add_option(&["--permute"], StoreTrue, "Key character permutation (tty only)");
+        ap.refer(&mut bip39_output)
+            .add_option(&["--bip39"], StoreTrue, "Output as a bip39 phrase");
         ap.parse_args_or_exit();
     }
     let salt: &[u8] = saltstr.as_bytes();
@@ -155,7 +160,12 @@ fn main() {
     if !crypt_file.is_empty() {
         crypt(crypt_file, result, crypt_length);
     }
-    println!("\n{}", hex::encode(result));
+    if bip39_output {
+        let mnemonic = Mnemonic::from_entropy(result, Language::English).unwrap();
+        println!("\n{}", mnemonic.into_phrase());
+    } else {
+        println!("\n{}", hex::encode(result));
+    }
 }
 
 fn crypt(file_path: String, key_bytes: &mut [u8], mut crypt_length: u64) {
